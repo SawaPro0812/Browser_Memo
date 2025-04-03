@@ -1,0 +1,29 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+/* content-area */
+.content-area {
+    display: flex;
+    width: 90%;
+    height: 70%;
+    margin: 0 auto;
+}
+/* left-content */
+.left-content {
+    width: 50%;
+    background-color: red;
+}
+
+/* right-content */
+.right-content {
+    width: 50%;
+    background-color: blue;
+    text-align: center;
+}
+
+.textarea {
+    width: 90%;
+    height: 500px;
+}

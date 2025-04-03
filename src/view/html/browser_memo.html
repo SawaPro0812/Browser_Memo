@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>ブラウザメモ</title>
+
+    <link rel="stylesheet" href="../css/browser_memo.css" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src=""></script>
+</head>
+<body>
+<header>
+    <h1>ブラウザメモ</h1>
+</header>
+<div class="content-area">
+    <div class="left-content">
+        <div>
+            {{ .memo }}
+        </div>
+    </div>
+    <div class="right-content">
+        <form action="/memo/create" method="POST">
+            <label>
+                <textarea name="memo" class="textarea"></textarea>
+            </label>
+            <input type="hidden" name="hashId">
+            <input type="hidden" name="sysTime" value="{{ .sysTime }}">
+            <div class="button-center">
+                <input type="submit" id="submit-button" value="送信" class="rsvp-button">
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
