@@ -1,6 +1,5 @@
-version: '3.9'
-
 services:
+  # アプリのコンテナ
   app:
     build:
       context: .
@@ -10,3 +9,18 @@ services:
     volumes:
       - ./src/:/go/src
     tty: true
+
+  # MySQLのコンテナ
+  db:
+    build: ./docker/mysql
+    container_name: db-container
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Tokyo
+    ports:
+      - '3306:3306'
