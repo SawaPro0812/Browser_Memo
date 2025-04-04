@@ -9,6 +9,10 @@ services:
     volumes:
       - ./src/:/go/src
     tty: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
 
   # MySQLのコンテナ
   db:
@@ -24,3 +28,7 @@ services:
       - TZ=Asia/Tokyo
     ports:
       - '3306:3306'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'

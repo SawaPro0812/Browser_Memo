@@ -15,7 +15,9 @@
 <div class="content-area">
     <div class="left-content">
         <div>
-            {{ .memo }}
+            {{ range .memos }}
+            <div>{{ .Memo }}</div>
+            {{ end }}
         </div>
     </div>
     <div class="right-content">
@@ -23,7 +25,7 @@
             <label>
                 <textarea name="memo" class="textarea"></textarea>
             </label>
-            <input type="hidden" name="hashId">
+            <input type="hidden" name="hashId" value="{{ .hashId }}">
             <input type="hidden" name="sysTime" value="{{ .sysTime }}">
             <div class="button-center">
                 <input type="submit" id="submit-button" value="送信" class="rsvp-button">
