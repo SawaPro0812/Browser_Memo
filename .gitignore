@@ -3,4 +3,4 @@
 .env
 .idea/
 .vscode/
-.docker/mysql/data/å
+docker/mysql/data

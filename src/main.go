@@ -5,10 +5,14 @@ import (
     "fmt"
     "time"
     "crypto/sha512"
+    "net/url"
+    "net/http"
 
     "gorm.io/gorm"
     "gorm.io/driver/mysql"
 )
+
+var r *gin.Engine
 
 // memosテーブルモデル宣言
 type memos struct {
@@ -53,36 +57,44 @@ func main() {
 
 // メモ画面初期表示
 func memoTop(c *gin.Context) {
-    // DB接続情報取得
-    db := gormConnect()
-    //hashId := "6a50c6c7868cd35ce9cf32c64689247198ab387910fe6c6f389a1bc2d8935fbd2b26540f959fefbe66bb41861de4df6612eb0a96f373d7dd2b04d8e34323c114"
-    //list := db.Find(&memos{}, "hash_id=?", hashId)
-    // 構造体を宣言？
-    memos := memos{}
+    // リクエスト
+    r := c.Request
+    // URL取得
+    myUrl, _ := url.Parse(r.URL.String())
+    // クエリパラメータ取得
+    params, _ := url.ParseQuery(myUrl.RawQuery)
 
-    result := db.First(&memos)
-    if result.Error != nil {
-        fmt.Println("Error:", result.Error)
-    } else {
-        fmt.Printf("Memo: %+v\n", memos) // 取得したデータを表示
+    // hashIdを設定する
+    var hashId string
+    if (len(params["hashId"]) > 0) {
+            hashId = params["hashId"][0]
     }
+
+    memos, _ := selectMemosByHashId(hashId)
 
     // システム日時を取得する
     t := time.Now().String()
-    c.HTML(200, "browser_memo.html", gin.H{"sysTime": t, "memo": memos})
+    if len(hashId) > 0 {
+        c.HTML(200, "browser_memo.html", gin.H{"sysTime": t, "memos": memos, "hashId": hashId})
+    } else {
+        c.HTML(200, "browser_memo.html", gin.H{"sysTime": t})
+    }
 }
 
 // メモ画面初期表示
 func memoCreate(c *gin.Context) {
     memo := c.PostForm("memo")
     sysTime := c.PostForm("sysTime")
-    // hashIdを生成する
-    hashId := createHashId(sysTime)
-    fmt.Println(hashId)
+    hashId := c.PostForm("hashId")
+    if len(hashId) == 0 {
+        // hashIdを生成する
+        hashId = createHashId(sysTime)
+    }
+
     // DB接続情報取得
     db := gormConnect()
     db.Create(&memos{Memo: memo, Hash_id: hashId})
-    c.HTML(200, "browser_memo.html", gin.H{"memo": memo})
+    c.Redirect(http.StatusFound, "/memo?hashId=" + hashId)
 }
 
 // hashIdを生成する
@@ -95,4 +107,24 @@ func createHashId(sysTime string) string {
     // ハッシュ化する
     sha512 := sha512.Sum512(p)
     return fmt.Sprintf("%x", sha512)
+}
+
+// ハッシュIDをキーとしてメモのリストを取得する
+func selectMemosByHashId(hashId string) ([]memos, error) {
+    // DB接続情報取得
+    db := gormConnect()
+    var memosList []memos
+    if len(hashId) > 0 {
+        result := db.Where("hash_id = ?", hashId).Find(&memosList)
+        if result.Error != nil {
+            fmt.Println("Error:メモが取得できませんでした")
+            return nil, result.Error
+        }
+        // rows affected でレコードの有無を確かめる
+        if result.RowsAffected == 0 {
+            return nil, nil
+        }
+        return memosList, nil
+    }
+    return nil, nil
 }
