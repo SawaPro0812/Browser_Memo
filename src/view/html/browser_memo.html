@@ -6,19 +6,25 @@
 
     <link rel="stylesheet" href="../css/browser_memo.css" type="text/css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src=""></script>
+    <script src="../js/browser_memo.js"></script>
 </head>
 <body>
 <header>
-    <h1>ブラウザメモ</h1>
+    <div class="title">ブラウザメモ</div>
 </header>
 <div class="content-area">
     <div class="left-content">
-        <div>
-            {{ range .memos }}
-            <div>{{ .Memo }}</div>
-            {{ end }}
+        {{ range .memos }}
+        <div class="memo-box">
+            <div class="memo-area">
+                <div class="memo-text">{{ .Memo }}</div>
+            </div>
+            <br>
+            <div class="">{{ .CreatedAt }}</div>
+            <a href="/memo/edit">編集</a>
+            <a href="/memo/delete">削除</a>
         </div>
+        {{ end }}
     </div>
     <div class="right-content">
         <form action="/memo/create" method="POST">
@@ -28,7 +34,7 @@
             <input type="hidden" name="hashId" value="{{ .hashId }}">
             <input type="hidden" name="sysTime" value="{{ .sysTime }}">
             <div class="button-center">
-                <input type="submit" id="submit-button" value="送信" class="rsvp-button">
+                <input type="submit" id="submit-button" value="送信" class="button">
             </div>
         </form>
     </div>
