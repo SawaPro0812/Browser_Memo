@@ -45,6 +45,7 @@ func main() {
 
 	r := gin.Default()
 	r.Static("/css", "view/css")
+	r.Static("/js", "view/js")
 	r.LoadHTMLGlob("view/html/*.html")
 
 	// メモ画面を表示する
